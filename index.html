@@ -2,86 +2,105 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Forge Training</title>
+  <title>Forge Training Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="layout-cards font-modern">
 
 <header>
+  <div id="header-timer">⏱️ <span id="tempo-total">00:00:00</span></div>
   <h1>Forge Training</h1>
 </header>
 
-<nav>
-  <button onclick="showScreen('treinos')">Treinos</button>
-  <button onclick="showScreen('dia')">Treino do Dia</button>
-  <button onclick="showScreen('calendario')">Calendário</button>
-  <button onclick="showScreen('ajustes')">⚙️</button>
+<nav id="bottom-nav">
+  <button onclick="showScreen('treinos')">🏋️<br>Treinos</button>
+  <button onclick="showScreen('biblioteca')">📚<br>Biblioteca</button>
+  <button onclick="showScreen('dia')">🔥<br>Hoje</button>
+  <button onclick="showScreen('calendario')">📅<br>Histórico</button>
+  <button onclick="showScreen('ajustes')">⚙️<br>Ajustes</button>
 </nav>
 
 <main>
   <section id="treinos" class="screen">
     <h2>Meus Treinos</h2>
-    <div class="tabs">
-      <button id="btn-A" onclick="openTreino('A')">A</button>
-      <button id="btn-B" onclick="openTreino('B')">B</button>
-      <button id="btn-C" onclick="openTreino('C')">C</button>
-      <button id="btn-D" onclick="openTreino('D')">D</button>
-      <button id="btn-E" onclick="openTreino('E')">E</button>
+    <div class="tabs" id="abas-treino">
+      <button onclick="openTreino('A')">A</button>
+      <button onclick="openTreino('B')">B</button>
+      <button onclick="openTreino('C')">C</button>
+      <button onclick="openTreino('D')">D</button>
+      <button onclick="openTreino('E')">E</button>
     </div>
     <div id="treino-container"></div>
   </section>
 
+  <section id="biblioteca" class="screen">
+    <h2>Biblioteca de Exercícios</h2>
+    <div class="config-box">
+      <input type="text" id="novo-grupo" placeholder="Novo Grupo (ex: Peito)">
+      <button onclick="adicionarGrupo()" class="btn-acao">+</button>
+    </div>
+    <div id="lista-grupos"></div>
+  </section>
+
   <section id="dia" class="screen active">
-    <h2>Treino do Dia</h2>
-    <p>Próximo: <strong id="treino-atual">A</strong></p>
-    <progress id="progresso-dia" value="0" max="100"></progress>
-    <span id="percentual">0%</span>
+    <h2>Treino: <span id="treino-atual-letra">A</span></h2>
+    <div class="progress-container">
+      <progress id="progresso-dia" value="0" max="100"></progress>
+      <span id="percentual">0%</span>
+    </div>
     <div id="lista-dia"></div>
-    <div id="status-final" style="display:none;"></div>
   </section>
 
   <section id="calendario" class="screen">
-    <div class="calendar-nav" style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="calendar-header">
       <button onclick="mudarMes(-1)">◀</button>
       <h3 id="mes-atual"></h3>
       <button onclick="mudarMes(1)">▶</button>
     </div>
     <div id="calendario-grade" class="calendar-grid"></div>
-    <div id="resumo" style="margin-top:15px;">
-      <p>Total: <strong id="total-treinos">0</strong></p>
-      <p style="font-size:0.8rem; color:var(--accent-color);">
-        A:<span id="count-A">0</span> | B:<span id="count-B">0</span> | C:<span id="count-C">0</span> | D:<span id="count-D">0</span> | E:<span id="count-E">0</span>
-      </p>
-      <button onclick="resetarMes()" style="background:#a00; color:white; width:100%; border:none; padding:10px; border-radius:8px;">LIMPAR MÊS</button>
-    </div>
   </section>
 
   <section id="ajustes" class="screen">
     <div class="config-box">
-      <p>Ciclo de Treinos:</p>
-      <select id="select-qtd" onchange="salvarConfig()">
-        <option value="2">A, B</option>
-        <option value="3">A, B, C</option>
-        <option value="4">A, B, C, D</option>
-        <option value="5">A, B, C, D, E</option>
+      <h3>🎨 Visual e Fontes</h3>
+      <label>Layout:</label>
+      <select id="select-layout" onchange="mudarLayout(this.value)">
+        <option value="layout-cards">Cards Modernos</option>
+        <option value="layout-list">Lista Minimalista</option>
+        <option value="layout-glass">Glass (Translúcido)</option>
+      </select>
+      <label>Fonte:</label>
+      <select id="select-fonte" onchange="mudarFonte(this.value)">
+        <option value="font-modern">Moderna</option>
+        <option value="font-sport">Sport (Robusta)</option>
+        <option value="font-tech">Tech (Digital)</option>
       </select>
     </div>
+
     <div class="config-box">
-      <p>Tema Visual:</p>
-      <select id="select-tema" onchange="mudarTema(this.value)">
-        <option value="industrial">Industrial (Laranja)</option>
-        <option value="neon">Cyber Neon (Verde)</option>
-        <option value="royal">Royal (Ouro)</option>
-        <option value="custom">Personalizado 🎨</option>
-      </select>
-      <div id="custom-colors" style="display:none; margin-top:10px;">
-        Destaque: <input type="color" id="color-accent" onchange="aplicarCorManual()">
-        Fundo: <input type="color" id="color-bg" onchange="aplicarCorManual()">
+      <h3>📅 Cores por Treino</h3>
+      <div class="color-grid">
+        <span>A: <input type="color" id="cp-A" onchange="atualizarCorTreino('A', this.value)"></span>
+        <span>B: <input type="color" id="cp-B" onchange="atualizarCorTreino('B', this.value)"></span>
+        <span>C: <input type="color" id="cp-C" onchange="atualizarCorTreino('C', this.value)"></span>
+      </div>
+    </div>
+
+    <div class="config-box">
+      <h3>⏱️ Cronômetros</h3>
+      <label><input type="checkbox" id="check-descanso" onchange="toggleDescanso(this.checked)"> Ativar Timer de Descanso</label>
+      <div id="descanso-config" style="display:none; margin-top:10px;">
+        Segundos: <input type="number" id="input-segundos-descanso" value="60" style="width:60px">
       </div>
     </div>
   </section>
 </main>
+
+<div id="timer-descanso-ui" style="display:none;">
+  <span id="valor-descanso">60</span>s
+  <button onclick="iniciarDescanso()">🔃</button>
+</div>
 
 <script src="app.js"></script>
 </body>
