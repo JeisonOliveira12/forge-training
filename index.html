@@ -10,7 +10,7 @@
 <body>
 
 <header>
-  <h1>Forge Training</h1>
+  <h1 id="app-title">Forge Training</h1>
 </header>
 
 <nav>
@@ -43,11 +43,11 @@
       <span id="percentual">0%</span>
     </div>
     <div id="lista-dia"></div>
-    <div id="status-final" style="display:none; color:#4CAF50; font-weight:bold; text-align:center; margin-top:10px;"></div>
+    <div id="status-final" style="display:none; color:var(--accent-color); font-weight:bold; text-align:center; margin-top:10px;"></div>
   </section>
 
   <section id="calendario" class="screen">
-    <h2>Histórico Visual</h2>
+    <h2>Histórico</h2>
     <div class="calendar-nav" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
       <button onclick="mudarMes(-1)">◀</button>
       <h3 id="mes-atual"></h3>
@@ -55,16 +55,16 @@
     </div>
     <div id="calendario-grade" class="calendar-grid"></div>
     
-    <div id="resumo" style="margin-top:20px; border-top:1px solid #444; padding-top:15px;">
+    <div id="resumo" style="margin-top:20px; border-top:1px solid var(--card-bg); padding-top:15px;">
       <p>Total Geral: <strong id="total-treinos">0</strong></p>
-      <div id="contagem-individual" style="font-size: 0.9em; color: #4CAF50; margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+      <div id="contagem-individual" style="font-size: 0.9em; color: var(--accent-color); margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
         <span>A: <strong id="count-A">0</strong></span>
         <span>B: <strong id="count-B">0</strong></span>
         <span>C: <strong id="count-C">0</strong></span>
         <span>D: <strong id="count-D">0</strong></span>
         <span>E: <strong id="count-E">0</strong></span>
       </div>
-      <button onclick="resetarMes()" style="background:#a00; color:white; border:none; padding:10px; border-radius:4px; width:100%; font-weight:bold;">LIMPAR MÊS ATUAL</button>
+      <button onclick="resetarMes()" style="background:#a00; color:white; border:none; padding:10px; border-radius:4px; width:100%; font-weight:bold;">LIMPAR MÊS</button>
     </div>
   </section>
 
@@ -78,6 +78,21 @@
         <option value="4">4 Treinos (A, B, C, D)</option>
         <option value="5">5 Treinos (A, B, C, D, E)</option>
       </select>
+    </div>
+
+    <div class="config-box" style="margin-top: 20px;">
+      <p>Tema Visual:</p>
+      <select id="select-tema" onchange="mudarTema(this.value)">
+        <option value="industrial">Industrial (Laranja)</option>
+        <option value="neon">Cyber Neon (Verde)</option>
+        <option value="royal">Royal (Ouro)</option>
+        <option value="custom">Personalizado 🎨</option>
+      </select>
+
+      <div id="custom-colors" style="display:none; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+        <label style="display:block; margin-bottom: 10px;">Destaque: <input type="color" id="color-accent" onchange="aplicarCorManual()"></label>
+        <label style="display:block;">Fundo: <input type="color" id="color-bg" onchange="aplicarCorManual()"></label>
+      </div>
     </div>
   </section>
 </main>
