@@ -15,31 +15,37 @@
 
 <main>
   <section id="treinos" class="screen">
-    <h2>Meus Treinos</h2>
-    <div class="tabs">
-      <button onclick="openTreino('A')">A</button>
-      <button onclick="openTreino('B')">B</button>
-      <button onclick="openTreino('C')">C</button>
-      <button onclick="openTreino('D')">D</button>
-      <button onclick="openTreino('E')">E</button>
+    <div class="header-section">
+      <h2>Configurar Treinos</h2>
+      <div class="tabs">
+        <button onclick="openTreino('A')">A</button>
+        <button onclick="openTreino('B')">B</button>
+        <button onclick="openTreino('C')">C</button>
+        <button onclick="openTreino('D')">D</button>
+        <button onclick="openTreino('E')">E</button>
+      </div>
     </div>
     <div id="treino-container"></div>
   </section>
 
   <section id="biblioteca" class="screen">
-    <h2>Biblioteca</h2>
+    <h2>Biblioteca de Exercícios</h2>
     <div class="config-box">
-      <input type="text" id="novo-grupo" placeholder="Novo Grupo (ex: Pernas)">
-      <button onclick="adicionarGrupo()" class="btn-acao">Criar Grupo</button>
+      <div style="display:flex; gap:5px;">
+        <input type="text" id="novo-grupo-input" placeholder="Novo Grupo (ex: Peito)">
+        <button onclick="adicionarGrupo()" class="btn-acao">+</button>
+      </div>
     </div>
     <div id="lista-grupos"></div>
   </section>
 
   <section id="dia" class="screen active">
-    <h2>Hoje: Treino <span id="treino-atual-letra">A</span></h2>
-    <div class="progress-container">
-      <progress id="progresso-dia" value="0" max="100"></progress>
-      <span id="percentual">0%</span>
+    <div class="card-dia">
+      <h2>Treino <span id="treino-atual-letra">A</span></h2>
+      <div class="progress-wrapper">
+        <progress id="progresso-dia" value="0" max="100"></progress>
+        <span id="percentual">0%</span>
+      </div>
     </div>
     <div id="lista-dia"></div>
   </section>
@@ -47,21 +53,24 @@
   <section id="calendario" class="screen">
     <div class="calendar-header">
       <button onclick="mudarMes(-1)">◀</button>
-      <h3 id="mes-atual"></h3>
+      <h3 id="mes-atual">Janeiro 2026</h3>
       <button onclick="mudarMes(1)">▶</button>
+    </div>
+    <div class="calendar-weekdays">
+      <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
     </div>
     <div id="calendario-grade" class="calendar-grid"></div>
   </section>
 
   <section id="ajustes" class="screen">
     <div class="config-box">
-      <h3>🎨 Visual e Estilo</h3>
+      <h3>🎨 Visual e Fontes</h3>
       <div class="ajuste-item">
         <label>Layout:</label>
         <select id="select-layout" onchange="mudarLayout(this.value)">
-          <option value="layout-cards">Cards Modernos</option>
-          <option value="layout-list">Lista Minimalista</option>
-          <option value="layout-glass">Glass (Translúcido)</option>
+          <option value="layout-cards">Cards Modernos (Foto 1)</option>
+          <option value="layout-list">Lista Clean (Foto 2)</option>
+          <option value="layout-glass">Glass Effect (Foto 3)</option>
         </select>
       </div>
       <div class="ajuste-item">
@@ -69,20 +78,20 @@
         <select id="select-fonte" onchange="mudarFonte(this.value)">
           <option value="font-modern">Moderna</option>
           <option value="font-sport">Sport (Impact)</option>
-          <option value="font-tech">Tech (Mono)</option>
+          <option value="font-tech">Tech (Digital)</option>
         </select>
       </div>
       <div class="ajuste-item">
-        <label>Tema Personalizado:</label>
-        <div style="display: flex; gap: 10px; margin-top: 5px;">
-           <input type="color" id="cor-destaque" onchange="aplicarTemaManual()" title="Cor de Destaque">
-           <input type="color" id="cor-fundo" onchange="aplicarTemaManual()" title="Cor de Fundo">
+        <label>Cores Customizadas:</label>
+        <div style="display:flex; gap:10px; margin-top:5px;">
+          Fundo: <input type="color" id="cor-fundo" onchange="aplicarTemaManual()">
+          Destaque: <input type="color" id="cor-destaque" onchange="aplicarTemaManual()">
         </div>
       </div>
     </div>
 
     <div class="config-box">
-      <h3>📅 Cores do Calendário</h3>
+      <h3>📅 Cores dos Treinos (Calendário)</h3>
       <div class="color-grid">
         <span>A <input type="color" id="cp-A" onchange="atualizarCorTreino('A', this.value)"></span>
         <span>B <input type="color" id="cp-B" onchange="atualizarCorTreino('B', this.value)"></span>
