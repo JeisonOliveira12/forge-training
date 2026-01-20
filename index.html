@@ -5,7 +5,7 @@
   <title>Forge Training</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="estilo.css">
 </head>
 
 <body>
@@ -18,20 +18,20 @@
   <button onclick="showScreen('treinos')">Treinos</button>
   <button onclick="showScreen('dia')">Treino do Dia</button>
   <button onclick="showScreen('calendario')">Calendário</button>
+  <button onclick="showScreen('ajustes')">⚙️</button>
 </nav>
 
 <main>
 
-  <!-- TREINOS -->
   <section id="treinos" class="screen active">
     <h2>Treinos</h2>
 
     <div class="tabs">
-      <button onclick="openTreino('A')">A</button>
-      <button onclick="openTreino('B')">B</button>
-      <button onclick="openTreino('C')">C</button>
-      <button onclick="openTreino('D')">D</button>
-      <button onclick="openTreino('E')">E</button>
+      <button id="btn-A" onclick="openTreino('A')">A</button>
+      <button id="btn-B" onclick="openTreino('B')">B</button>
+      <button id="btn-C" onclick="openTreino('C')">C</button>
+      <button id="btn-D" onclick="openTreino('D')">D</button>
+      <button id="btn-E" onclick="openTreino('E')">E</button>
     </div>
 
     <div id="treino-container">
@@ -39,35 +39,40 @@
     </div>
   </section>
 
-  <!-- TREINO DO DIA -->
   <section id="dia" class="screen">
     <h2>Treino do Dia</h2>
-
     <div id="treino-dia-info">
       <p>Treino atual: <strong id="treino-atual">A</strong></p>
       <p>Progresso:</p>
       <progress id="progresso-dia" value="0" max="100"></progress>
       <span id="percentual">0%</span>
     </div>
-
     <div id="lista-dia">
       <p>Os exercícios do dia aparecerão aqui.</p>
     </div>
-
     <div id="status-final"></div>
   </section>
 
-  <!-- CALENDÁRIO -->
   <section id="calendario" class="screen">
-    <h2>Histórico de Treinos</h2>
-
-    <p>Marque manualmente treinos feitos no passado.</p>
-
+    <h2>Histórico</h2>
     <div id="calendario-container"></div>
-
     <div id="resumo">
       <h3>Resumo Geral</h3>
-      <p>Total de treinos realizados: <strong id="total-treinos">0</strong></p>
+      <p>Total realizados: <strong id="total-treinos">0</strong></p>
+    </div>
+  </section>
+
+  <section id="ajustes" class="screen">
+    <h2>Configurações</h2>
+    <div class="config-box" style="background: #222; padding: 20px; border-radius: 8px; margin-top: 20px;">
+      <p>Selecione quantos treinos terá seu ciclo:</p>
+      <select id="select-qtd" onchange="salvarConfig()" style="width: 100%; padding: 10px; background: #333; color: white; border: 1px solid #444;">
+        <option value="2">2 Treinos (A, B)</option>
+        <option value="3">3 Treinos (A, B, C)</option>
+        <option value="4">4 Treinos (A, B, C, D)</option>
+        <option value="5" selected>5 Treinos (A, B, C, D, E)</option>
+      </select>
+      <p style="font-size: 0.8em; color: #888; margin-top: 15px;">O ciclo voltará ao início automaticamente após o último treino definido.</p>
     </div>
   </section>
 
@@ -75,4 +80,5 @@
 
 <script src="app.js"></script>
 </body>
+</html>
 </html>
