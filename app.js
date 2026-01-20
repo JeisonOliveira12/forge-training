@@ -11,13 +11,6 @@ let indiceTreinoAtual = carregar('indiceTreinoAtual', 0);
 let historico = carregar('historico', {});
 let dataVisualizacao = new Date();
 
-// --- FUNÇÃO DE LIMPEZA DE EMERGÊNCIA ---
-// Isso vai rodar uma vez para limpar o teste que não sai da tela
-if (historico["20/01/2026"]) {
-    delete historico["20/01/2026"];
-    salvar('historico', historico);
-}
-
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
@@ -94,7 +87,6 @@ function finalizarTreino(letra, qtd) {
   status.style.display = 'block';
   status.innerText = 'TREINO CONCLUÍDO!';
   
-  // USA FORMATO AAAA-MM-DD para o calendário pintar o dia de verde
   const agora = new Date();
   const hoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
   
@@ -129,11 +121,16 @@ function montarCalendario() {
     const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
     const diasNoMes = new Date(ano, mes + 1, 0).getDate();
 
+    const contadores = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+
     for (let i = 0; i < primeiroDiaSemana; i++) grade.innerHTML += `<div></div>`;
 
     for (let dia = 1; dia <= diasNoMes; dia++) {
         const dataKey = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
         const treino = historico[dataKey] || "";
+        
+        if (treino && contadores[treino] !== undefined) contadores[treino]++;
+
         grade.innerHTML += `
             <div class="calendar-day ${treino ? 'has-training' : ''}" onclick="editarDia('${dataKey}')">
                 <span>${dia}</span>
@@ -141,6 +138,10 @@ function montarCalendario() {
             </div>`;
     }
     document.getElementById('total-treinos').innerText = Object.keys(historico).length;
+    TREINOS.forEach(letra => {
+        const el = document.getElementById(`count-${letra}`);
+        if (el) el.innerText = contadores[letra];
+    });
 }
 
 function editarDia(data) {
@@ -166,5 +167,5 @@ window.onload = () => {
     const salva = carregar('qtd_treinos', 5);
     if(document.getElementById('select-qtd')) document.getElementById('select-qtd').value = salva;
     aplicarQuantidade(salva);
-    carregarTreinoDia();
+    showScreen('dia'); // Define o treino do dia como tela inicial
 };
