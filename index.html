@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <title>Forge Training</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
-  <h1 id="app-title">Forge Training</h1>
+  <h1>Forge Training</h1>
 </header>
 
 <nav>
@@ -30,57 +29,45 @@
       <button id="btn-D" onclick="openTreino('D')">D</button>
       <button id="btn-E" onclick="openTreino('E')">E</button>
     </div>
-    <div id="treino-container">
-      <p>Selecione um treino para editar.</p>
-    </div>
+    <div id="treino-container"></div>
   </section>
 
   <section id="dia" class="screen active">
     <h2>Treino do Dia</h2>
-    <div id="treino-dia-info">
-      <p>Treino atual: <strong id="treino-atual">A</strong></p>
-      <progress id="progresso-dia" value="0" max="100"></progress>
-      <span id="percentual">0%</span>
-    </div>
+    <p>Próximo: <strong id="treino-atual">A</strong></p>
+    <progress id="progresso-dia" value="0" max="100"></progress>
+    <span id="percentual">0%</span>
     <div id="lista-dia"></div>
-    <div id="status-final" style="display:none; color:var(--accent-color); font-weight:bold; text-align:center; margin-top:10px;"></div>
+    <div id="status-final" style="display:none;"></div>
   </section>
 
   <section id="calendario" class="screen">
-    <h2>Histórico</h2>
-    <div class="calendar-nav" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <div class="calendar-nav" style="display:flex; justify-content:space-between; align-items:center;">
       <button onclick="mudarMes(-1)">◀</button>
       <h3 id="mes-atual"></h3>
       <button onclick="mudarMes(1)">▶</button>
     </div>
     <div id="calendario-grade" class="calendar-grid"></div>
-    
-    <div id="resumo" style="margin-top:20px; border-top:1px solid var(--card-bg); padding-top:15px;">
-      <p>Total Geral: <strong id="total-treinos">0</strong></p>
-      <div id="contagem-individual" style="font-size: 0.9em; color: var(--accent-color); margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-        <span>A: <strong id="count-A">0</strong></span>
-        <span>B: <strong id="count-B">0</strong></span>
-        <span>C: <strong id="count-C">0</strong></span>
-        <span>D: <strong id="count-D">0</strong></span>
-        <span>E: <strong id="count-E">0</strong></span>
-      </div>
-      <button onclick="resetarMes()" style="background:#a00; color:white; border:none; padding:10px; border-radius:4px; width:100%; font-weight:bold;">LIMPAR MÊS</button>
+    <div id="resumo" style="margin-top:15px;">
+      <p>Total: <strong id="total-treinos">0</strong></p>
+      <p style="font-size:0.8rem; color:var(--accent-color);">
+        A:<span id="count-A">0</span> | B:<span id="count-B">0</span> | C:<span id="count-C">0</span> | D:<span id="count-D">0</span> | E:<span id="count-E">0</span>
+      </p>
+      <button onclick="resetarMes()" style="background:#a00; color:white; width:100%; border:none; padding:10px; border-radius:8px;">LIMPAR MÊS</button>
     </div>
   </section>
 
   <section id="ajustes" class="screen">
-    <h2>Configurações</h2>
     <div class="config-box">
-      <p>Quantidade de treinos no ciclo:</p>
+      <p>Ciclo de Treinos:</p>
       <select id="select-qtd" onchange="salvarConfig()">
-        <option value="2">2 Treinos (A, B)</option>
-        <option value="3">3 Treinos (A, B, C)</option>
-        <option value="4">4 Treinos (A, B, C, D)</option>
-        <option value="5">5 Treinos (A, B, C, D, E)</option>
+        <option value="2">A, B</option>
+        <option value="3">A, B, C</option>
+        <option value="4">A, B, C, D</option>
+        <option value="5">A, B, C, D, E</option>
       </select>
     </div>
-
-    <div class="config-box" style="margin-top: 20px;">
+    <div class="config-box">
       <p>Tema Visual:</p>
       <select id="select-tema" onchange="mudarTema(this.value)">
         <option value="industrial">Industrial (Laranja)</option>
@@ -88,10 +75,9 @@
         <option value="royal">Royal (Ouro)</option>
         <option value="custom">Personalizado 🎨</option>
       </select>
-
-      <div id="custom-colors" style="display:none; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-        <label style="display:block; margin-bottom: 10px;">Destaque: <input type="color" id="color-accent" onchange="aplicarCorManual()"></label>
-        <label style="display:block;">Fundo: <input type="color" id="color-bg" onchange="aplicarCorManual()"></label>
+      <div id="custom-colors" style="display:none; margin-top:10px;">
+        Destaque: <input type="color" id="color-accent" onchange="aplicarCorManual()">
+        Fundo: <input type="color" id="color-bg" onchange="aplicarCorManual()">
       </div>
     </div>
   </section>
