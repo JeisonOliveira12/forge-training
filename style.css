@@ -10,8 +10,7 @@ select { width: 100%; padding: 10px; background: #333; color: white; border: 1px
 input { background: #222; color: white; border: 1px solid #444; padding: 8px; margin: 2px; border-radius: 4px; width: 60px; }
 input[placeholder="Exercicio"] { width: 140px; }
 
-/* CALENDÁRIO */
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #222; padding: 5px; border-radius: 8px; }
 .calendar-day { aspect-ratio: 1/1; background: #333; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7em; border-radius: 4px; cursor: pointer; position: relative; }
-.calendar-day.has-training { background: #1b4d1d; color: #4CAF50; font-weight: bold; }
+.calendar-day.has-training { background-color: #1b4d1d !important; color: #4CAF50 !important; font-weight: bold; }
 .calendar-day small { font-size: 0.8em; margin-top: 2px; }
