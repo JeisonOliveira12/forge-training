@@ -11,6 +11,13 @@ let indiceTreinoAtual = carregar('indiceTreinoAtual', 0);
 let historico = carregar('historico', {});
 let dataVisualizacao = new Date();
 
+// --- FUNÇÃO DE LIMPEZA DE EMERGÊNCIA ---
+// Isso vai rodar uma vez para limpar o teste que não sai da tela
+if (historico["20/01/2026"]) {
+    delete historico["20/01/2026"];
+    salvar('historico', historico);
+}
+
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
@@ -86,16 +93,23 @@ function finalizarTreino(letra, qtd) {
   const status = document.getElementById('status-final');
   status.style.display = 'block';
   status.innerText = 'TREINO CONCLUÍDO!';
-  const hoje = new Date().toISOString().split('T')[0];
+  
+  // USA FORMATO AAAA-MM-DD para o calendário pintar o dia de verde
+  const agora = new Date();
+  const hoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
+  
   historico[hoje] = letra;
   salvar('historico', historico);
+
   indiceTreinoAtual = (indiceTreinoAtual + 1) % qtd;
   salvar('indiceTreinoAtual', indiceTreinoAtual);
+
   setTimeout(() => {
     status.style.display = 'none';
     dadosTreinos[letra].forEach(ex => ex.feito = false);
     salvar('dadosTreinos', dadosTreinos);
     carregarTreinoDia();
+    montarCalendario();
   }, 1500);
 }
 
@@ -111,10 +125,11 @@ function montarCalendario() {
     const ano = dataVisualizacao.getFullYear();
     const mes = dataVisualizacao.getMonth();
     labelMes.innerText = dataVisualizacao.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-    const primeiroDiaMes = new Date(ano, mes, 1).getDay();
+    
+    const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
     const diasNoMes = new Date(ano, mes + 1, 0).getDate();
 
-    for (let i = 0; i < primeiroDiaMes; i++) grade.innerHTML += `<div></div>`;
+    for (let i = 0; i < primeiroDiaSemana; i++) grade.innerHTML += `<div></div>`;
 
     for (let dia = 1; dia <= diasNoMes; dia++) {
         const dataKey = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
