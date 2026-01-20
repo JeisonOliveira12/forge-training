@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="layout-cards font-modern">
+<body id="main-body" class="layout-cards font-modern">
 
 <header>
   <div id="header-timer">⏱️ <span id="tempo-total">00:00:00</span></div>
@@ -16,7 +16,7 @@
 <main>
   <section id="treinos" class="screen">
     <h2>Meus Treinos</h2>
-    <div class="tabs" id="abas-treino">
+    <div class="tabs">
       <button onclick="openTreino('A')">A</button>
       <button onclick="openTreino('B')">B</button>
       <button onclick="openTreino('C')">C</button>
@@ -27,16 +27,16 @@
   </section>
 
   <section id="biblioteca" class="screen">
-    <h2>Biblioteca de Exercícios</h2>
+    <h2>Biblioteca</h2>
     <div class="config-box">
-      <input type="text" id="novo-grupo" placeholder="Novo Grupo (ex: Peito)">
-      <button onclick="adicionarGrupo()" class="btn-acao">Adicionar Grupo</button>
+      <input type="text" id="novo-grupo" placeholder="Novo Grupo (ex: Pernas)">
+      <button onclick="adicionarGrupo()" class="btn-acao">Criar Grupo</button>
     </div>
     <div id="lista-grupos"></div>
   </section>
 
   <section id="dia" class="screen active">
-    <h2>Treino: <span id="treino-atual-letra">A</span></h2>
+    <h2>Hoje: Treino <span id="treino-atual-letra">A</span></h2>
     <div class="progress-container">
       <progress id="progresso-dia" value="0" max="100"></progress>
       <span id="percentual">0%</span>
@@ -55,7 +55,7 @@
 
   <section id="ajustes" class="screen">
     <div class="config-box">
-      <h3>🎨 Visual e Fontes</h3>
+      <h3>🎨 Visual e Estilo</h3>
       <div class="ajuste-item">
         <label>Layout:</label>
         <select id="select-layout" onchange="mudarLayout(this.value)">
@@ -68,26 +68,31 @@
         <label>Fonte:</label>
         <select id="select-fonte" onchange="mudarFonte(this.value)">
           <option value="font-modern">Moderna</option>
-          <option value="font-sport">Sport (Robusta)</option>
-          <option value="font-tech">Tech (Digital)</option>
+          <option value="font-sport">Sport (Impact)</option>
+          <option value="font-tech">Tech (Mono)</option>
         </select>
       </div>
-    </div>
-
-    <div class="config-box">
-      <h3>📅 Cores por Treino</h3>
-      <div class="color-grid">
-        <span>A: <input type="color" id="cp-A" onchange="atualizarCorTreino('A', this.value)"></span>
-        <span>B: <input type="color" id="cp-B" onchange="atualizarCorTreino('B', this.value)"></span>
-        <span>C: <input type="color" id="cp-C" onchange="atualizarCorTreino('C', this.value)"></span>
+      <div class="ajuste-item">
+        <label>Tema Base:</label>
+        <select id="select-tema" onchange="mudarTema(this.value)">
+          <option value="dark">Padrão Dark</option>
+          <option value="custom">Personalizado 🎨</option>
+        </select>
+      </div>
+      <div id="custom-theme-box" style="display:none; margin-top:10px; border-top:1px solid #444; padding-top:10px;">
+         <div style="margin-bottom:5px">Destaque: <input type="color" id="cor-destaque" onchange="aplicarTemaManual()"></div>
+         <div>Fundo: <input type="color" id="cor-fundo" onchange="aplicarTemaManual()"></div>
       </div>
     </div>
 
     <div class="config-box">
-      <h3>⏱️ Cronômetros</h3>
-      <label><input type="checkbox" id="check-descanso" onchange="toggleDescanso(this.checked)"> Ativar Timer de Descanso</label>
-      <div id="descanso-config" style="display:none; margin-top:10px;">
-        Segundos: <input type="number" id="input-segundos-descanso" value="60">
+      <h3>📅 Cores do Calendário</h3>
+      <div class="color-grid">
+        <span>A <input type="color" id="cp-A" onchange="atualizarCorTreino('A', this.value)"></span>
+        <span>B <input type="color" id="cp-B" onchange="atualizarCorTreino('B', this.value)"></span>
+        <span>C <input type="color" id="cp-C" onchange="atualizarCorTreino('C', this.value)"></span>
+        <span>D <input type="color" id="cp-D" onchange="atualizarCorTreino('D', this.value)"></span>
+        <span>E <input type="color" id="cp-E" onchange="atualizarCorTreino('E', this.value)"></span>
       </div>
     </div>
   </section>
@@ -100,11 +105,6 @@
   <button onclick="showScreen('calendario')">📅<br>Histórico</button>
   <button onclick="showScreen('ajustes')">⚙️<br>Ajustes</button>
 </nav>
-
-<div id="timer-descanso-ui" style="display:none;">
-  <span id="valor-descanso">60</span>s
-  <button onclick="iniciarDescanso()">🔃</button>
-</div>
 
 <script src="app.js"></script>
 </body>
