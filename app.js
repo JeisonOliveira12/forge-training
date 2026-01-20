@@ -1,170 +1,230 @@
-/* =========================
-   VARIÁVEIS GLOBAIS DE TEMA
-   ========================= */
-:root {
-  --bg-color: #0f0f0f;
-  --card-color: #1a1a1a;
-  --text-color: #eaeaea;
-  --muted-text: #9a9a9a;
-  --border-color: #333;
-  --accent-color: #ff6a00;
+/* ===============================
+   FORGE TRAINING – SCRIPT CORE
+   =============================== */
 
-  /* cores dos treinos */
-  --color-A: #ff6a00;
-  --color-B: #00c2ff;
-  --color-C: #7dff00;
-  --color-D: #ff005c;
-  --color-E: #b400ff;
+/* ---------- STORAGE ---------- */
+let dadosTreinos = JSON.parse(localStorage.getItem('dadosTreinos')) || {
+  A: [], B: [], C: [], D: [], E: []
+};
+
+let biblioteca = JSON.parse(localStorage.getItem('biblioteca')) || {
+  "Geral": ["Flexão", "Prancha"]
+};
+
+let historico = JSON.parse(localStorage.getItem('historico')) || {};
+let mesVisualizacao = new Date();
+
+/* ---------- NAVEGAÇÃO ---------- */
+function showScreen(id) {
+  document.querySelectorAll('nav button')
+    .forEach(b => b.classList.remove('active'));
+
+  document.querySelectorAll('.screen')
+    .forEach(s => s.classList.remove('active'));
+
+  document.getElementById(id).classList.add('active');
+  event?.target?.classList.add('active');
+
+  if (id === 'dia') carregarTreinoDia();
+  if (id === 'biblioteca') renderizarBiblioteca();
+  if (id === 'calendario') montarCalendario();
 }
 
-/* =========================
-   RESET BÁSICO
-   ========================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+/* ---------- BIBLIOTECA ---------- */
+function adicionarGrupo() {
+  const input = document.getElementById('novo-grupo-input');
+  const nome = input.value.trim();
+  if (!nome) return;
+
+  if (!biblioteca[nome]) {
+    biblioteca[nome] = [];
+    input.value = '';
+    salvarBib();
+    renderizarBiblioteca();
+  } else {
+    alert("Grupo já existe");
+  }
 }
 
-body {
-  background: var(--bg-color);
-  color: var(--text-color);
-  min-height: 100vh;
+function adicionarExercicioGrupo(grupo) {
+  const nome = prompt(`Novo exercício em ${grupo}:`);
+  if (!nome) return;
+
+  biblioteca[grupo].push(nome);
+  salvarBib();
+  renderizarBiblioteca();
 }
 
-/* =========================
-   HEADER E NAVEGAÇÃO
-   ========================= */
-header {
-  padding: 14px;
-  text-align: center;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--card-color);
+function renderizarBiblioteca() {
+  const container = document.getElementById('lista-grupos');
+  container.innerHTML = '';
+
+  Object.keys(biblioteca).forEach(grupo => {
+    container.innerHTML += `
+      <div class="config-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>${grupo}</strong>
+          <button class="btn-outline btn" style="width:auto"
+            onclick="adicionarExercicioGrupo('${grupo}')">+</button>
+        </div>
+        ${biblioteca[grupo]
+          .map(e => `<div style="margin-top:6px;font-size:13px;opacity:.7">${e}</div>`)
+          .join('')}
+      </div>
+    `;
+  });
 }
 
-header h1 {
-  font-size: 1.3rem;
-  letter-spacing: 1px;
+function salvarBib() {
+  localStorage.setItem('biblioteca', JSON.stringify(biblioteca));
 }
 
-nav {
-  display: flex;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--card-color);
+/* ---------- CALENDÁRIO ---------- */
+function mudarMes(delta) {
+  mesVisualizacao.setMonth(mesVisualizacao.getMonth() + delta);
+  montarCalendario();
 }
 
-nav button {
-  flex: 1;
-  padding: 12px;
-  background: none;
-  border: none;
-  color: var(--muted-text);
-  font-weight: bold;
+function montarCalendario() {
+  const grade = document.getElementById('calendario-grade');
+  const mesTxt = document.getElementById('mes-atual');
+  grade.innerHTML = '';
+
+  const ano = mesVisualizacao.getFullYear();
+  const mes = mesVisualizacao.getMonth();
+
+  mesTxt.innerText = new Date(ano, mes)
+    .toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+
+  const primeiroDia = new Date(ano, mes, 1).getDay();
+  const totalDias = new Date(ano, mes + 1, 0).getDate();
+
+  for (let i = 0; i < primeiroDia; i++) grade.innerHTML += `<div></div>`;
+
+  for (let d = 1; d <= totalDias; d++) {
+    const dataStr = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const treino = historico[dataStr];
+    const cor = treino ? `var(--color-${treino})` : '#222';
+
+    grade.innerHTML += `
+      <div class="calendar-day ${treino ? 'has-treino' : ''}"
+           style="border-color:${cor};color:${cor}"
+           onclick="marcarManual('${dataStr}')">
+        ${d}
+        ${treino ? `<small style="position:absolute;bottom:4px;font-size:8px">${treino}</small>` : ''}
+      </div>
+    `;
+  }
 }
 
-nav button:active {
-  background: var(--border-color);
-  color: var(--text-color);
+function marcarManual(data) {
+  const letra = prompt("Marcar qual treino? (A-E)");
+  if (!letra || !"ABCDE".includes(letra.toUpperCase())) return;
+
+  historico[data] = letra.toUpperCase();
+  localStorage.setItem('historico', JSON.stringify(historico));
+  montarCalendario();
 }
 
-/* =========================
-   TELAS
-   ========================= */
-main {
-  padding: 14px;
+/* ---------- VISUAL GLOBAL ---------- */
+function mudarFonte(fonte) {
+  document.body.classList.remove('font-modern', 'font-sport', 'font-tech');
+  document.body.classList.add(fonte);
+  localStorage.setItem('cfg_fonte', fonte);
 }
 
-.screen {
-  display: none;
+function aplicarTemaManual() {
+  const bg = document.getElementById('cor-fundo').value;
+  const ac = document.getElementById('cor-destaque').value;
+
+  document.documentElement.style.setProperty('--bg-color', bg);
+  document.documentElement.style.setProperty('--accent-color', ac);
+
+  localStorage.setItem('cfg_bg', bg);
+  localStorage.setItem('cfg_ac', ac);
 }
 
-.screen.active {
-  display: block;
+function atualizarCorTreino(letra, cor) {
+  document.documentElement.style.setProperty(`--color-${letra}`, cor);
+
+  let cores = JSON.parse(localStorage.getItem('cfg_cores')) || {};
+  cores[letra] = cor;
+  localStorage.setItem('cfg_cores', JSON.stringify(cores));
 }
 
-h2 {
-  margin-bottom: 12px;
-  font-size: 1.1rem;
-  border-left: 4px solid var(--accent-color);
-  padding-left: 8px;
+/* ---------- TREINO DO DIA ---------- */
+function carregarTreinoDia() {
+  const idx = parseInt(localStorage.getItem('idx_treino') || 0);
+  const letra = "ABCDE"[idx];
+
+  document.getElementById('treino-atual-letra').innerText = letra;
+  const lista = document.getElementById('lista-dia');
+  lista.innerHTML = '';
+
+  const treinos = dadosTreinos[letra].filter(e => e.nome);
+
+  if (treinos.length === 0) {
+    lista.innerHTML = `<p style="opacity:.5;text-align:center">
+      Nenhum exercício no Treino ${letra}
+    </p>`;
+    return;
+  }
+
+  treinos.forEach((ex, i) => {
+    lista.innerHTML += `
+      <div class="lista-item">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>${ex.nome}</strong>
+          <input type="checkbox" onchange="atualizarProgresso()">
+        </div>
+        <small>${ex.peso || 0} kg</small>
+      </div>
+    `;
+  });
+
+  atualizarProgresso();
 }
 
-/* =========================
-   CARDS / CAIXAS
-   ========================= */
-.config-box,
-.lista-item,
-#treino-container,
-#lista-dia,
-#calendario-container {
-  background: var(--card-color);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 10px;
+function atualizarProgresso() {
+  const checks = document.querySelectorAll('#lista-dia input[type="checkbox"]');
+  const total = checks.length;
+  const feitos = [...checks].filter(c => c.checked).length;
+  const perc = total ? Math.round((feitos / total) * 100) : 0;
+
+  document.getElementById('progresso-dia').value = perc;
+  document.getElementById('percentual').innerText = perc + "%";
+
+  if (perc === 100 && total > 0) {
+    setTimeout(finalizarTreino, 400);
+  }
 }
 
-/* =========================
-   BOTÕES
-   ========================= */
-.btn-acao {
-  background: var(--accent-color);
-  border: none;
-  color: #000;
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-weight: bold;
+function finalizarTreino() {
+  if (!confirm("Finalizar treino e salvar histórico?")) return;
+
+  const hoje = new Date().toISOString().split('T')[0];
+  const idx = parseInt(localStorage.getItem('idx_treino') || 0);
+  const letra = "ABCDE"[idx];
+
+  historico[hoje] = letra;
+  localStorage.setItem('historico', JSON.stringify(historico));
+  localStorage.setItem('idx_treino', (idx + 1) % 5);
+
+  showScreen('dia');
 }
 
-/* =========================
-   TREINO DO DIA
-   ========================= */
-.lista-item small {
-  color: var(--muted-text);
-}
+/* ---------- INIT ---------- */
+window.onload = () => {
+  if (localStorage.getItem('cfg_fonte')) mudarFonte(localStorage.getItem('cfg_fonte'));
 
-/* =========================
-   PROGRESSO
-   ========================= */
-progress {
-  width: 100%;
-  height: 18px;
-}
+  if (localStorage.getItem('cfg_bg')) {
+    document.getElementById('cor-fundo').value = localStorage.getItem('cfg_bg');
+    document.getElementById('cor-destaque').value = localStorage.getItem('cfg_ac');
+    aplicarTemaManual();
+  }
 
-/* =========================
-   CALENDÁRIO
-   ========================= */
-#calendario-grade {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-}
+  const cores = JSON.parse(localStorage.getItem('cfg_cores')) || {};
+  Object.keys(cores).forEach(l => atualizarCorTreino(l, cores[l]));
 
-.calendar-day {
-  position: relative;
-  padding: 10px;
-  text-align: center;
-  border-radius: 4px;
-  border: 2px solid var(--border-color);
-  color: var(--text-color);
-  background: var(--bg-color);
-}
-
-.calendar-day.has-treino {
-  font-weight: bold;
-}
-
-/* =========================
-   FONTES E LAYOUTS
-   ========================= */
-.font-modern { font-family: system-ui; }
-.font-sport { font-family: Arial, sans-serif; }
-.font-tech { font-family: monospace; }
-
-.layout-cards .config-box { border-radius: 10px; }
-.layout-list .config-box { border-radius: 0; }
-.layout-glass .config-box {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(6px);
-}
+  showScreen('dia');
+};
