@@ -210,3 +210,22 @@ input, select, textarea {
 .dia[data-tipo="C"] { background: #ff0; color: #000; }
 
 .dia.vazio { background: transparent; }
+
+/* ---------- Fontes personalizáveis ---------- */
+body {
+  color: var(--font-color, #fff); /* cor da fonte padrão */
+}
+
+/* Modelos de fonte */
+body.font-modern {
+  font-family: "Segoe UI", sans-serif;
+}
+
+body.font-sport {
+  font-family: "Impact", sans-serif;
+  letter-spacing: 1px;
+}
+
+body.font-tech {
+  font-family: "Courier New", monospace;
+}
