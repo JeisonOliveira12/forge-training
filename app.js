@@ -384,6 +384,12 @@ function atualizarCorTreino(letra, cor) {
   localStorage.setItem("cfg_cores", JSON.stringify(cores));
 }
 
+/* 👉 Nova função para cor da fonte */
+function mudarCorFonte(cor) {
+  document.documentElement.style.setProperty("--font-color", cor);
+  localStorage.setItem("cfg_font_color", cor);
+}
+
 /* ---------- INIT ---------- */
 window.onload = () => {
   // Fonte
@@ -416,3 +422,4 @@ window.onload = () => {
   montarCalendario();
   showScreen("dia");
 };
+
