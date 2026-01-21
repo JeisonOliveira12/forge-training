@@ -179,7 +179,7 @@ function carregarTreinoDia() {
 
   treinos.forEach(ex => {
     lista.innerHTML += `
-      <div class="lista-item">
+      <div class="card-exercicio">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <strong>${ex.nome}</strong>
           <input type="checkbox" onchange="atualizarProgresso()">
@@ -222,6 +222,7 @@ function finalizarTreino() {
   localStorage.setItem("idx_treino", (idx + 1) % qtdTreinos);
 
   carregarTreinoDia();
+}
 }
 /* ---------- BIBLIOTECA ---------- */
 function adicionarGrupo() {
@@ -428,3 +429,4 @@ window.onload = () => {
   montarCalendario();
   showScreen("dia");
 };
+
