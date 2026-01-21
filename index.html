@@ -3,119 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Forge Training</title>
+  <title>Meu App de Treinos</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b0d10">
+  <link rel="icon" href="icon.png">
 </head>
 <body>
-<div class="app">
 
-  <!-- HEADER -->
-  <header>
-    <h1>FORGE</h1>
-    <p>Training System</p>
-  </header>
+  <nav>
+    <button onclick="showScreen('dia')">Dia</button>
+    <button onclick="showScreen('treinos')">Treinos</button>
+    <button onclick="showScreen('biblioteca')">Biblioteca</button>
+    <button onclick="showScreen('calendario')">Calendário</button>
+    <button onclick="showScreen('config')">Configurações</button>
+  </nav>
 
-  <!-- ===== TREINO DO DIA ===== -->
-  <section id="dia" class="screen active">
-    <div class="card">
-      <h2>Treino do Dia</h2>
-      <p>Treino atual: <strong id="treino-atual-letra">A</strong></p>
-      <progress id="progresso-dia" value="0" max="100"></progress>
-      <p style="margin-top:8px; text-align:right;">
-        <span id="percentual">0%</span>
-      </p>
-    </div>
+  <!-- Tela Treino do Dia -->
+  <section id="dia" class="screen">
+    <h2>Treino do Dia <span id="treino-atual-letra"></span></h2>
     <div id="lista-dia"></div>
-  </section>
 
-  <!-- ===== TREINOS ===== -->
-  <section id="treinos" class="screen">
-    <div class="card">
-      <h2>Treinos</h2>
-      <p>Configure seus exercícios</p>
-    </div>
-    <div id="lista-treinos"></div>
-  </section>
+    <progress id="progresso-dia" value="0" max="100"></progress>
+    <p id="percentual">0%</p>
 
-  <!-- ===== BIBLIOTECA ===== -->
-  <section id="biblioteca" class="screen">
-    <div class="card">
-      <h2>Biblioteca</h2>
-      <p>Grupos e exercícios</p>
-    </div>
-    <div class="config-box">
-      <input id="novo-grupo-input" placeholder="Novo grupo"
-             style="width:100%; padding:10px; border-radius:10px; border:none;">
-      <button class="btn" style="margin-top:10px;" onclick="adicionarGrupo()">Adicionar grupo</button>
-    </div>
-    <div id="lista-grupos"></div>
-  </section>
-
-  <!-- ===== CALENDÁRIO ===== -->
-  <section id="calendario" class="screen">
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <button class="btn-outline btn" style="width:auto; padding:8px 14px;" onclick="mudarMes(-1)">◀</button>
-        <h2 id="mes-atual">Mês</h2>
-        <button class="btn-outline btn" style="width:auto; padding:8px 14px;" onclick="mudarMes(1)">▶</button>
+    <!-- Cronômetros -->
+    <div id="cronometros">
+      <div>
+        <h3>Cronômetro de Treino</h3>
+        <span id="cronometro-treino">00:00</span>
+        <button onclick="iniciarCronometroTreino()">Iniciar</button>
+        <button onclick="pararCronometroTreino()">Parar</button>
+      </div>
+      <div id="cronometro-descanso-box" style="margin-top:12px;display:none">
+        <h3>Cronômetro de Descanso</h3>
+        <span id="cronometro-descanso">00:00</span>
+        <button onclick="iniciarCronometroDescanso()">Iniciar</button>
+        <button onclick="pararCronometroDescanso()">Parar</button>
       </div>
     </div>
-    <div class="card calendar" id="calendario-grade"></div>
   </section>
 
-  <!-- ===== CONFIGURAÇÕES ===== -->
-  <section id="config" class="screen">
-    <div class="card">
-      <h2>Configurações</h2>
-    </div>
-
-    <div class="config-box">
-      <h3>Quantidade de Treinos</h3>
+  <!-- Tela Treinos -->
+  <section id="treinos" class="screen">
+    <h2>Meus Treinos</h2>
+    <label>
+      Quantidade de treinos:
       <select id="qtd-treinos" onchange="definirQtdTreinos(this.value)">
         <option value="2">2</option>
         <option value="3">3</option>
         <option value="4">4</option>
         <option value="5">5</option>
       </select>
-    </div>
-
-    <div class="config-box">
-      <h3>Fonte</h3>
-      <button class="btn-outline btn" onclick="mudarFonte('font-modern')">Moderna</button>
-      <button class="btn-outline btn" onclick="mudarFonte('font-sport')" style="margin-top:8px;">Esportiva</button>
-      <button class="btn-outline btn" onclick="mudarFonte('font-tech')" style="margin-top:8px;">Tecnológica</button>
-    </div>
-
-    <div class="config-box">
-      <h3>Cores</h3>
-      <input type="color" id="cor-fundo" value="#0b0d10">
-      <input type="color" id="cor-destaque" value="#ff5c1b" style="margin-top:10px;">
-      <button class="btn" style="margin-top:10px;" onclick="aplicarTemaManual()">Aplicar tema</button>
-    </div>
-
-    <div class="config-box">
-      <h3>Cores dos Treinos</h3>
-      <label>A <input type="color" onchange="atualizarCorTreino('A', this.value)"></label><br>
-      <label>B <input type="color" onchange="atualizarCorTreino('B', this.value)"></label><br>
-      <label>C <input type="color" onchange="atualizarCorTreino('C', this.value)"></label><br>
-      <label>D <input type="color" onchange="atualizarCorTreino('D', this.value)"></label><br>
-      <label>E <input type="color" onchange="atualizarCorTreino('E', this.value)"></label>
-    </div>
+    </label>
+    <div id="lista-treinos"></div>
   </section>
 
-</div>
+  <!-- Tela Biblioteca -->
+  <section id="biblioteca" class="screen">
+    <h2>Biblioteca de Exercícios</h2>
+    <input id="novo-grupo-input" placeholder="Novo grupo">
+    <button onclick="adicionarGrupo()">Adicionar Grupo</button>
+    <div id="lista-grupos"></div>
+  </section><!-- Tela Calendário -->
+  <section id="calendario" class="screen">
+    <h2>Calendário</h2>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <button onclick="mudarMes(-1)">◀</button>
+      <span id="mes-atual"></span>
+      <button onclick="mudarMes(1)">▶</button>
+    </div>
+    <div id="calendario-grade" class="calendar-grid"></div>
+    <div id="resumo-treinos" class="card"></div>
+  </section>
 
-<!-- ===== NAVEGAÇÃO ===== -->
-<nav>
-  <button onclick="showScreen('dia')" class="active">Dia</button>
-  <button onclick="showScreen('treinos')">Treinos</button>
-  <button onclick="showScreen('biblioteca')">Biblioteca</button>
-  <button onclick="showScreen('calendario')">Calendário</button>
-  <button onclick="showScreen('config')">Config</button>
-</nav>
+  <!-- Tela Configurações -->
+  <section id="config" class="screen">
+    <h2>Configurações</h2>
 
-<script src="app.js"></script>
+    <h3>Fonte</h3>
+    <button onclick="mudarFonte('font-modern')">Moderna</button>
+    <button onclick="mudarFonte('font-sport')">Esportiva</button>
+    <button onclick="mudarFonte('font-tech')">Tecnológica</button>
+
+    <h3>Tema</h3>
+    <label>Cor de fundo <input type="color" id="cor-fundo" onchange="aplicarTemaManual()"></label>
+    <label>Cor de destaque <input type="color" id="cor-destaque" onchange="aplicarTemaManual()"></label>
+
+    <h3>Cronômetro de Descanso</h3>
+    <label>
+      <input type="checkbox" id="cfg-descanso" onchange="toggleCronometroDescanso(this.checked)">
+      Ativar cronômetro de descanso
+    </label>
+  </section>
+
+  <script src="app.js"></script>
 </body>
 </html>
