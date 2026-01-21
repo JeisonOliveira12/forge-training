@@ -213,4 +213,25 @@ function mudarFonte(f) {
   localStorage.setItem("cfg_fonte", f);
 }
 
-function aplicarTemaManual
+function aplicarTemaManual() {
+  const bg = document.getElementById("cor-fundo").value;
+  const ac = document.getElementById("cor-destaque").value;
+
+  document.documentElement.style.setProperty("--bg-color", bg);
+  document.documentElement.style.setProperty("--accent-color", ac);
+
+  localStorage.setItem("cfg_bg", bg);
+  localStorage.setItem("cfg_ac", ac);
+}
+
+function atualizarCorTreino(letra, cor) {
+  document.documentElement.style.setProperty(`--color-${letra}`, cor);
+  let cores = JSON.parse(localStorage.getItem("cfg_cores")) || {};
+  cores[letra] = cor;
+  localStorage.setItem("cfg_cores", JSON.stringify(cores));
+}
+
+/* ---------- INIT ---------- */
+window.onload = () => {
+  if (localStorage.getItem("cfg_fonte")) {
+    mudarFonte(localStorage.get
