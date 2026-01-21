@@ -244,7 +244,7 @@ function adicionarExercicioGrupo(grupo) {
   renderizarBiblioteca();
 }
 
-// Remover exercício da biblioteca (vamos adicionar o botão depois no HTML)
+// Remover exercício da biblioteca
 function removerExercicioGrupo(grupo, idx) {
   biblioteca[grupo].splice(idx, 1);
   salvarBib();
@@ -258,7 +258,7 @@ function renderizarBiblioteca() {
 
   Object.keys(biblioteca).forEach(grupo => {
     container.innerHTML += `
-      <div class="config-box">
+      <div class="grupo">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <strong>${grupo}</strong>
           <button class="btn-outline btn" style="width:auto"
@@ -429,4 +429,5 @@ window.onload = () => {
   montarCalendario();
   showScreen("dia");
 };
+
 
