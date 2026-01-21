@@ -18,34 +18,33 @@
     <button onclick="showScreen('config')">Configurações</button>
   </nav>
 
-<!-- Tela Treino do Dia -->
-<section id="dia" class="screen aba">
-  <h2>Treino do Dia <span id="treino-atual-letra"></span></h2>
-  <div id="lista-dia"></div>
+  <!-- Tela Treino do Dia -->
+  <section id="dia" class="screen aba">
+    <h2>Treino do Dia <span id="treino-atual-letra"></span></h2>
+    <div id="lista-dia"></div>
 
-  <progress id="progresso-dia" value="0" max="100"></progress>
-  <p id="percentual">0%</p>
-</section>
-
-    <!-- Cronômetros -->
-    <div id="cronometros">
-      <div>
-        <h3>Cronômetro de Treino</h3>
-        <span id="cronometro-treino">00:00</span>
-        <button onclick="iniciarCronometroTreino()">Iniciar</button>
-        <button onclick="pararCronometroTreino()">Parar</button>
-      </div>
-      <div id="cronometro-descanso-box" style="margin-top:12px;display:none">
-        <h3>Cronômetro de Descanso</h3>
-        <span id="cronometro-descanso">00:00</span>
-        <button onclick="iniciarCronometroDescanso()">Iniciar</button>
-        <button onclick="pararCronometroDescanso()">Parar</button>
-      </div>
-    </div>
+    <progress id="progresso-dia" value="0" max="100"></progress>
+    <p id="percentual">0%</p>
   </section>
 
+  <!-- Cronômetros -->
+  <div id="cronometros" class="aba">
+    <div>
+      <h3>Cronômetro de Treino</h3>
+      <span id="cronometro-treino">00:00</span>
+      <button onclick="iniciarCronometroTreino()">Iniciar</button>
+      <button onclick="pararCronometroTreino()">Parar</button>
+    </div>
+    <div id="cronometro-descanso-box" style="margin-top:12px;display:none">
+      <h3>Cronômetro de Descanso</h3>
+      <span id="cronometro-descanso">00:00</span>
+      <button onclick="iniciarCronometroDescanso()">Iniciar</button>
+      <button onclick="pararCronometroDescanso()">Parar</button>
+    </div>
+  </div>
+
   <!-- Tela Treinos -->
-  <section id="treinos" class="screen">
+  <section id="treinos" class="screen aba">
     <h2>Meus Treinos</h2>
     <label>
       Quantidade de treinos:
@@ -60,44 +59,52 @@
   </section>
 
   <!-- Tela Biblioteca -->
-  <section id="biblioteca" class="screen">
+  <section id="biblioteca" class="screen aba">
     <h2>Biblioteca de Exercícios</h2>
     <input id="novo-grupo-input" placeholder="Novo grupo">
     <button onclick="adicionarGrupo()">Adicionar Grupo</button>
     <div id="lista-grupos"></div>
-  </section><!-- Tela Calendário -->
-  <section id="calendario" class="screen">
+  </section>
+
+  <!-- Tela Calendário -->
+  <section id="calendario" class="screen aba">
     <h2>Calendário</h2>
     <div style="display:flex;justify-content:space-between;align-items:center">
       <button onclick="mudarMes(-1)">◀</button>
       <span id="mes-atual"></span>
       <button onclick="mudarMes(1)">▶</button>
     </div>
-    <div id="calendario-grade" class="calendar-grid"></div>
-    <div id="resumo-treinos" class="card"></div>
+    <div id="calendario-grade" class="grid-calendario"></div>
+    <div id="resumo-treinos"></div>
   </section>
 
   <!-- Tela Configurações -->
-  <section id="config" class="screen">
+  <section id="config" class="screen aba">
     <h2>Configurações</h2>
 
-    <h3>Fonte</h3>
-    <button onclick="mudarFonte('font-modern')">Moderna</button>
-    <button onclick="mudarFonte('font-sport')">Esportiva</button>
-    <button onclick="mudarFonte('font-tech')">Tecnológica</button>
+    <div class="config-box">
+      <h3>Fonte</h3>
+      <button onclick="mudarFonte('font-modern')">Moderna</button>
+      <button onclick="mudarFonte('font-sport')">Esportiva</button>
+      <button onclick="mudarFonte('font-tech')">Tecnológica</button>
+    </div>
 
-    <h3>Tema</h3>
-    <label>Cor de fundo <input type="color" id="cor-fundo" onchange="aplicarTemaManual()"></label>
-    <label>Cor de destaque <input type="color" id="cor-destaque" onchange="aplicarTemaManual()"></label>
+    <div class="config-box">
+      <h3>Tema</h3>
+      <label>Cor de fundo <input type="color" id="cor-fundo" onchange="aplicarTemaManual()"></label>
+      <label>Cor de destaque <input type="color" id="cor-destaque" onchange="aplicarTemaManual()"></label>
+      <label>Cor da fonte <input type="color" id="cor-fonte" onchange="mudarCorFonte(this.value)"></label>
+    </div>
 
-    <h3>Cronômetro de Descanso</h3>
-    <label>
-      <input type="checkbox" id="cfg-descanso" onchange="toggleCronometroDescanso(this.checked)">
-      Ativar cronômetro de descanso
-    </label>
+    <div class="config-box">
+      <h3>Cronômetro de Descanso</h3>
+      <label>
+        <input type="checkbox" id="cfg-descanso" onchange="toggleCronometroDescanso(this.checked)">
+        Ativar cronômetro de descanso
+      </label>
+    </div>
   </section>
 
   <script src="app.js"></script>
 </body>
 </html>
-
