@@ -158,6 +158,8 @@ function salvarTreinos() {
 
 /* ---------- TREINO DO DIA ---------- */
 function carregarTreinoDia() {
+  function carregarTreinoDia() {
+  document.getElementById("debug").innerText = "Entrou em carregarTreinoDia";
   const idx = parseInt(localStorage.getItem("idx_treino") || 0);
   const idxSeguro = Math.min(Math.max(idx, 0), qtdTreinos - 1);
   localStorage.setItem("idx_treino", idxSeguro);
@@ -433,5 +435,6 @@ function showScreen(id) {
   document.querySelectorAll(".aba").forEach(el => el.style.display = "none");
   document.getElementById(id).style.display = "block";
 }
+
 
 
