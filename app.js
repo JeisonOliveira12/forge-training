@@ -76,4 +76,141 @@ function carregarTreinoDia() {
     lista.innerHTML += `
       <div class="lista-item">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong>${
+          <strong>${ex.nome}</strong>
+          <input type="checkbox" onchange="atualizarProgresso()">
+        </div>
+        <small>${ex.peso || 0} kg</small>
+      </div>
+    `;
+  });
+
+  atualizarProgresso();
+}
+
+function atualizarProgresso() {
+  const checks = document.querySelectorAll("#lista-dia input[type='checkbox']");
+  const total = checks.length;
+  const feitos = [...checks].filter(c => c.checked).length;
+  const perc = total ? Math.round((feitos / total) * 100) : 0;
+
+  document.getElementById("progresso-dia").value = perc;
+  document.getElementById("percentual").innerText = perc + "%";
+
+  if (perc === 100 && total > 0) {
+    setTimeout(finalizarTreino, 400);
+  }
+}
+
+function finalizarTreino() {
+  if (!confirm("Finalizar treino e salvar histórico?")) return;
+
+  const hoje = new Date().toISOString().split("T")[0];
+  const idx = parseInt(localStorage.getItem("idx_treino") || 0);
+
+  historico[hoje] = letras[idx];
+  localStorage.setItem("historico", JSON.stringify(historico));
+  localStorage.setItem("idx_treino", (idx + 1) % qtdTreinos);
+
+  showScreen("dia");
+}
+
+/* ---------- BIBLIOTECA ---------- */
+function adicionarGrupo() {
+  const input = document.getElementById("novo-grupo-input");
+  const nome = input.value.trim();
+  if (!nome || biblioteca[nome]) return;
+
+  biblioteca[nome] = [];
+  input.value = "";
+  salvarBib();
+  renderizarBiblioteca();
+}
+
+function adicionarExercicioGrupo(grupo) {
+  const nome = prompt(`Novo exercício em ${grupo}:`);
+  if (!nome) return;
+
+  biblioteca[grupo].push(nome);
+  salvarBib();
+  renderizarBiblioteca();
+}
+
+function renderizarBiblioteca() {
+  const container = document.getElementById("lista-grupos");
+  container.innerHTML = "";
+
+  Object.keys(biblioteca).forEach(grupo => {
+    container.innerHTML += `
+      <div class="config-box">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>${grupo}</strong>
+          <button class="btn-outline btn" style="width:auto"
+            onclick="adicionarExercicioGrupo('${grupo}')">+</button>
+        </div>
+        ${biblioteca[grupo]
+          .map(e => `<div style="margin-top:6px;font-size:13px;opacity:.7">${e}</div>`)
+          .join("")}
+      </div>
+    `;
+  });
+}
+
+function salvarBib() {
+  localStorage.setItem("biblioteca", JSON.stringify(biblioteca));
+}
+
+/* ---------- CALENDÁRIO ---------- */
+function mudarMes(delta) {
+  mesVisualizacao.setMonth(mesVisualizacao.getMonth() + delta);
+  montarCalendario();
+}
+
+function montarCalendario() {
+  const grade = document.getElementById("calendario-grade");
+  const mesTxt = document.getElementById("mes-atual");
+  grade.innerHTML = "";
+
+  const ano = mesVisualizacao.getFullYear();
+  const mes = mesVisualizacao.getMonth();
+
+  mesTxt.innerText = new Date(ano, mes)
+    .toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+
+  const primeiroDia = new Date(ano, mes, 1).getDay();
+  const totalDias = new Date(ano, mes + 1, 0).getDate();
+
+  for (let i = 0; i < primeiroDia; i++) grade.innerHTML += "<div></div>";
+
+  for (let d = 1; d <= totalDias; d++) {
+    const dataStr = `${ano}-${String(mes + 1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const treino = historico[dataStr];
+    const cor = treino ? `var(--color-${treino})` : "#222";
+
+    grade.innerHTML += `
+      <div class="calendar-day ${treino ? "has-treino" : ""}"
+           style="border-color:${cor};color:${cor}"
+           onclick="marcarManual('${dataStr}')">
+        ${d}
+        ${treino ? `<small style="position:absolute;bottom:4px;font-size:8px">${treino}</small>` : ""}
+      </div>
+    `;
+  }
+}
+
+function marcarManual(data) {
+  const letra = prompt("Marcar qual treino? (A–E)");
+  if (!letra || !letras.includes(letra.toUpperCase())) return;
+
+  historico[data] = letra.toUpperCase();
+  localStorage.setItem("historico", JSON.stringify(historico));
+  montarCalendario();
+}
+
+/* ---------- VISUAL ---------- */
+function mudarFonte(f) {
+  document.body.classList.remove("font-modern","font-sport","font-tech");
+  document.body.classList.add(f);
+  localStorage.setItem("cfg_fonte", f);
+}
+
+function aplicarTemaManual
