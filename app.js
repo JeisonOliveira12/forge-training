@@ -41,7 +41,8 @@ function definirQtdTreinos(qtd) {
   carregarTreinoDia();
 }
 
-/* ---------- TREINOS ---------- */
+/* ---------- TREINOS (EDIÇÃO COMPLETA) ---------- */
+// Renderiza os treinos com lista de exercícios e botões de adicionar/editar/remover
 function renderizarTreinos() {
   const container = document.getElementById("lista-treinos");
   if (!container) return;
@@ -52,10 +53,107 @@ function renderizarTreinos() {
     container.innerHTML += `
       <div class="card">
         <h3>Treino ${letra}</h3>
-        <p>Adicione exercícios para o treino ${letra}</p>
+        <p>Adicione e edite exercícios do treino ${letra}</p>
+        <button class="btn" onclick="adicionarExercicioTreino('${letra}')">Adicionar exercício</button>
+        ${renderListaExerciciosTreino(letra)}
       </div>
     `;
   }
+}
+
+// Lista de exercícios com clique no nome para escolher da biblioteca e inputs para reps/séries/peso
+function renderListaExerciciosTreino(letra) {
+  const lista = dadosTreinos[letra] || [];
+  if (!lista.length) {
+    return `<div style="opacity:.6;margin-top:6px">Nenhum exercício</div>`;
+  }
+  return `
+    <div style="margin-top:8px">
+      ${lista.map((ex, i) => `
+        <div class="lista-item" style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <button class="btn-outline btn" style="width:auto" onclick="editarExercicioTreino('${letra}', ${i})">
+              ${ex.nome || 'Selecionar exercício'}
+            </button>
+            <div>
+              <button class="btn-outline btn" style="width:auto" onclick="removerExercicioTreino('${letra}', ${i})">🗑</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <label style="flex:1">
+              <small>Repetições</small>
+              <input type="number" min="0" value="${ex.repeticoes ?? ''}" 
+                     oninput="atualizarCampoExercicio('${letra}', ${i}, 'repeticoes', this.value)">
+            </label>
+            <label style="flex:1">
+              <small>Séries</small>
+              <input type="number" min="0" value="${ex.series ?? ''}" 
+                     oninput="atualizarCampoExercicio('${letra}', ${i}, 'series', this.value)">
+            </label>
+            <label style="flex:1">
+              <small>Peso (kg)</small>
+              <input type="number" min="0" step="0.5" value="${ex.peso ?? ''}" 
+                     oninput="atualizarCampoExercicio('${letra}', ${i}, 'peso', this.value)">
+            </label>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+// Adiciona um exercício novo (começa sem nome, usuário clica para escolher da biblioteca)
+function adicionarExercicioTreino(letra) {
+  dadosTreinos[letra].push({ nome: "", repeticoes: null, series: null, peso: null });
+  salvarTreinos();
+  renderizarTreinos();
+  if (document.querySelector("#dia.screen.active")) carregarTreinoDia();
+}
+
+// Atualiza campos numéricos (reps/séries/peso)
+function atualizarCampoExercicio(letra, idx, campo, valor) {
+  const v = valor === "" ? null : Number(valor);
+  dadosTreinos[letra][idx][campo] = v;
+  salvarTreinos();
+  if (document.querySelector("#dia.screen.active")) carregarTreinoDia();
+}
+
+// Edita o nome do exercício escolhendo da biblioteca
+function editarExercicioTreino(letra, idx) {
+  // Monta uma lista simples de opções a partir da biblioteca
+  const grupos = Object.keys(biblioteca);
+  const todas = grupos.flatMap(g => biblioteca[g].map(n => `${g}: ${n}`));
+  if (!todas.length) {
+    alert("A biblioteca está vazia. Adicione exercícios na aba Biblioteca.");
+    return;
+  }
+
+  // Prompt com índice para escolher
+  const menu = todas.map((item, i) => `${i+1}. ${item}`).join("\n");
+  const escolha = prompt(`Escolha o exercício pelo número:\n\n${menu}\n\nDigite o número:`);
+
+  if (!escolha) return;
+  const idxEscolha = parseInt(escolha) - 1;
+  if (isNaN(idxEscolha) || idxEscolha < 0 || idxEscolha >= todas.length) return;
+
+  // Extrai apenas o nome após "Grupo: Nome"
+  const nome = todas[idxEscolha].split(": ").slice(1).join(": ");
+  dadosTreinos[letra][idx].nome = nome;
+  salvarTreinos();
+  renderizarTreinos();
+  if (document.querySelector("#dia.screen.active")) carregarTreinoDia();
+}
+
+// Remove exercício do treino
+function removerExercicioTreino(letra, idx) {
+  dadosTreinos[letra].splice(idx, 1);
+  salvarTreinos();
+  renderizarTreinos();
+  if (document.querySelector("#dia.screen.active")) carregarTreinoDia();
+}
+
+function salvarTreinos() {
+  localStorage.setItem("dadosTreinos", JSON.stringify(dadosTreinos));
 }
 
 /* ---------- TREINO DO DIA ---------- */
@@ -86,7 +184,11 @@ function carregarTreinoDia() {
           <strong>${ex.nome}</strong>
           <input type="checkbox" onchange="atualizarProgresso()">
         </div>
-        <small>${ex.peso || 0} kg</small>
+        <small>
+          ${ex.repeticoes ? `${ex.repeticoes} rep` : ""} 
+          ${ex.series ? `• ${ex.series} séries` : ""} 
+          ${ex.peso ? `• ${ex.peso} kg` : ""}
+        </small>
       </div>
     `;
   });
@@ -121,7 +223,6 @@ function finalizarTreino() {
 
   carregarTreinoDia();
 }
-
 /* ---------- BIBLIOTECA ---------- */
 function adicionarGrupo() {
   const input = document.getElementById("novo-grupo-input");
@@ -142,8 +243,16 @@ function adicionarExercicioGrupo(grupo) {
   renderizarBiblioteca();
 }
 
+// Remover exercício da biblioteca (vamos adicionar o botão depois no HTML)
+function removerExercicioGrupo(grupo, idx) {
+  biblioteca[grupo].splice(idx, 1);
+  salvarBib();
+  renderizarBiblioteca();
+}
+
 function renderizarBiblioteca() {
   const container = document.getElementById("lista-grupos");
+  if (!container) return;
   container.innerHTML = "";
 
   Object.keys(biblioteca).forEach(grupo => {
@@ -155,7 +264,12 @@ function renderizarBiblioteca() {
             onclick="adicionarExercicioGrupo('${grupo}')">+</button>
         </div>
         ${biblioteca[grupo]
-          .map(e => `<div style="margin-top:6px;font-size:13px;opacity:.7">${e}</div>`)
+          .map((e, i) => `
+            <div style="margin-top:6px;font-size:13px;opacity:.85;display:flex;justify-content:space-between;align-items:center">
+              <span>${e}</span>
+              <button class="btn-outline btn" style="width:auto" onclick="removerExercicioGrupo('${grupo}', ${i})">🗑</button>
+            </div>
+          `)
           .join("")}
       </div>
     `;
@@ -175,6 +289,7 @@ function mudarMes(delta) {
 function montarCalendario() {
   const grade = document.getElementById("calendario-grade");
   const mesTxt = document.getElementById("mes-atual");
+  if (!grade || !mesTxt) return;
   grade.innerHTML = "";
 
   const ano = mesVisualizacao.getFullYear();
@@ -191,7 +306,10 @@ function montarCalendario() {
   for (let d = 1; d <= totalDias; d++) {
     const dataStr = `${ano}-${String(mes + 1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
     const treino = historico[dataStr];
-    const cor = treino ? `var(--color-${treino})` : "#222";
+
+    const diaSemana = new Date(ano, mes, d).getDay(); // 0 dom, 6 sáb
+    const corSemTreino = (diaSemana === 0 || diaSemana === 6) ? "#555" : "#333";
+    const cor = treino ? `var(--color-${treino})` : corSemTreino;
 
     grade.innerHTML += `
       <div class="calendar-day ${treino ? "has-treino" : ""}"
@@ -202,6 +320,32 @@ function montarCalendario() {
       </div>
     `;
   }
+
+  montarResumoTreinos();
+}
+
+// Resumo: total e por letra
+function montarResumoTreinos() {
+  const resumoBox = document.getElementById("resumo-treinos");
+  if (!resumoBox) return;
+
+  const contagens = { A:0, B:0, C:0, D:0, E:0 };
+  Object.values(historico).forEach(letra => {
+    if (contagens[letra] !== undefined) contagens[letra]++;
+  });
+
+  const total = Object.keys(historico).length;
+
+  resumoBox.innerHTML = `
+    <h3>Resumo dos Treinos</h3>
+    <p>Total: <strong>${total}</strong></p>
+    <ul style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
+      ${Object.keys(contagens)
+        .slice(0, qtdTreinos)
+        .map(l => `<li>Treino ${l}: <strong>${contagens[l]}</strong></li>`)
+        .join("")}
+    </ul>
+  `;
 }
 
 function marcarManual(data) {
@@ -269,4 +413,3 @@ window.onload = () => {
   montarCalendario();
   showScreen("dia");
 };
-
