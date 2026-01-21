@@ -1,13 +1,43 @@
-/* ---------- CONFIGURAÇÃO DE QUANTIDADE DE TREINOS ---------- */
+const letras = ["A","B","C","D","E"];
 let qtdTreinos = parseInt(localStorage.getItem("qtdTreinos")) || 5;
 
+let dadosTreinos = JSON.parse(localStorage.getItem("dadosTreinos")) || {
+  A: [], B: [], C: [], D: [], E: []
+};
+
+let biblioteca = JSON.parse(localStorage.getItem("biblioteca")) || {
+  Geral: ["Flexão", "Prancha"]
+};
+
+let historico = JSON.parse(localStorage.getItem("historico")) || {};
+let mesVisualizacao = new Date();
+
+/* ---------- NAVEGAÇÃO ---------- */
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+
+  const tela = document.getElementById(id);
+  if (tela) tela.classList.add("active");
+
+  const mapa = { dia: 0, treinos: 1, biblioteca: 2, calendario: 3, config: 4 };
+  if (mapa[id] !== undefined) {
+    document.querySelectorAll("nav button")[mapa[id]].classList.add("active");
+  }
+
+  if (id === "dia") carregarTreinoDia();
+  if (id === "biblioteca") renderizarBiblioteca();
+  if (id === "calendario") montarCalendario();
+}
+
+/* ---------- CONFIGURAÇÃO DE QUANTIDADE DE TREINOS ---------- */
 function definirQtdTreinos(qtd) {
   qtdTreinos = parseInt(qtd);
   localStorage.setItem("qtdTreinos", qtdTreinos);
   renderizarTreinos();
 }
 
-/* ---------- TREINOS (renderização da aba) ---------- */
+/* ---------- TREINOS ---------- */
 function renderizarTreinos() {
   const container = document.getElementById("lista-treinos");
   container.innerHTML = "";
@@ -46,48 +76,4 @@ function carregarTreinoDia() {
     lista.innerHTML += `
       <div class="lista-item">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong>${ex.nome}</strong>
-          <input type="checkbox" onchange="atualizarProgresso()">
-        </div>
-        <small>${ex.peso || 0} kg</small>
-      </div>
-    `;
-  });
-
-  atualizarProgresso();
-}
-
-function finalizarTreino() {
-  if (!confirm("Finalizar treino e salvar histórico?")) return;
-
-  const hoje = new Date().toISOString().split("T")[0];
-  const idx = parseInt(localStorage.getItem("idx_treino") || 0);
-
-  historico[hoje] = letras[idx];
-  localStorage.setItem("historico", JSON.stringify(historico));
-
-  // alterna apenas dentro da quantidade escolhida
-  localStorage.setItem("idx_treino", (idx + 1) % qtdTreinos);
-
-  showScreen("dia");
-}
-
-/* ---------- INIT ---------- */
-window.onload = () => {
-  if (localStorage.getItem("cfg_fonte")) mudarFonte(localStorage.getItem("cfg_fonte"));
-
-  if (localStorage.getItem("cfg_bg")) {
-    document.getElementById("cor-fundo").value = localStorage.getItem("cfg_bg");
-    document.getElementById("cor-destaque").value = localStorage.getItem("cfg_ac");
-    aplicarTemaManual();
-  }
-
-  const cores = JSON.parse(localStorage.getItem("cfg_cores")) || {};
-  Object.keys(cores).forEach(l => atualizarCorTreino(l, cores[l]));
-
-  // Ajusta seletor de quantidade de treinos
-  document.getElementById("qtd-treinos").value = qtdTreinos;
-
-  renderizarTreinos();
-  showScreen("dia");
-};
+          <strong>${
