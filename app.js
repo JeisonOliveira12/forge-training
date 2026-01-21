@@ -1,3 +1,5 @@
+alert("O app.js foi carregado!");
+
 const letras = ["A","B","C","D","E"];
 let qtdTreinos = parseInt(localStorage.getItem("qtdTreinos")) || 5;
 
@@ -461,6 +463,7 @@ function showScreen(id) {
   document.querySelectorAll(".aba").forEach(el => el.style.display = "none");
   document.getElementById(id).style.display = "block";
 }
+
 
 
 
