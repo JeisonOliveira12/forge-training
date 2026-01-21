@@ -405,6 +405,12 @@ window.onload = () => {
     aplicarTemaManual();
   }
 
+  // 👉 Cor da fonte
+  const corFonte = localStorage.getItem("cfg_font_color");
+  if (corFonte) {
+    document.documentElement.style.setProperty("--font-color", corFonte);
+  }
+
   // Cores dos treinos
   const cores = JSON.parse(localStorage.getItem("cfg_cores")) || {};
   Object.keys(cores).forEach(l => atualizarCorTreino(l, cores[l]));
@@ -422,4 +428,3 @@ window.onload = () => {
   montarCalendario();
   showScreen("dia");
 };
-
